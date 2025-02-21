@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gráfico de Dados Econômicos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #e6ffe6;
+            text-align: center;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            margin: auto;
+            width: 60%;
+            border-radius: 10px;
+            box-shadow: 2px 2px 10px gray;
+        }
+        img {
+            width: 100%;
+            border-radius: 10px;
+        }
+        a {
+            text-decoration: none;
+            color: black;
+            margin-top: 10px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Gráfico dos Dados Econômicos - {{ dado.ano }}</h1>
+        <img src="{{ grafico }}" alt="Gráfico de Dados Econômicos">
+        <br>
+        <a href="{% url 'lista_dados' %}">Voltar</a>
+    </div>
+</body>
+</html>
