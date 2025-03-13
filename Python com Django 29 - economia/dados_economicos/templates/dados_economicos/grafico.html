@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gráfico de Dados Econômicos</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -14,12 +15,13 @@
             background-color: white;
             padding: 20px;
             margin: auto;
-            width: 60%;
+            width: 80%;
             border-radius: 10px;
             box-shadow: 2px 2px 10px gray;
         }
-        img {
+        canvas {
             width: 100%;
+            max-width: 800px;
             border-radius: 10px;
         }
         a {
@@ -32,10 +34,74 @@
 </head>
 <body>
     <div class="container">
-        <h1>Gráfico dos Dados Econômicos - {{ dado.ano }}</h1>
-        <img src="{{ grafico }}" alt="Gráfico de Dados Econômicos">
+        <h1>Gráfico de Dados Econômicos - {{ ano }}</h1>
+        <canvas id="graficoCanvas"></canvas>
         <br>
         <a href="{% url 'lista_dados' %}">Voltar</a>
     </div>
+
+    <script>
+        // Recebendo dados do Django
+        const meses = {{ meses|safe }};
+        const valores = {{ valores|safe }};
+
+        const ctx = document.getElementById('graficoCanvas').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: meses,
+                datasets: [{
+                    label: 'Percentual Econômico (%)',
+                    data: valores,
+                    borderColor: 'blue',
+                    backgroundColor: 'rgba(0, 0, 255, 0.2)',
+                    borderWidth: 2,
+                    pointRadius: 5,
+                    pointHoverRadius: 7,
+                    pointBackgroundColor: 'red',
+                    pointHoverBackgroundColor: 'orange',
+                    fill: false,
+                    tension: 0.3
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(tooltipItem) {
+                                return `${tooltipItem.label}: ${tooltipItem.raw.toFixed(2)}%`;
+                            }
+                        }
+                    },
+                    legend: {
+                        labels: {
+                            color: "black",
+                            font: { size: 14 }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: "Meses",
+                            color: "black",
+                            font: { size: 16 }
+                        }
+                    },
+                    y: {
+                        beginAtZero: false,
+                        title: {
+                            display: true,
+                            text: "Percentual (%)",
+                            color: "black",
+                            font: { size: 16 }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
 </body>
 </html>
