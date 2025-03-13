@@ -4,6 +4,7 @@ from .forms import DadosEconomicosForm
 import matplotlib.pyplot as plt
 import io
 import urllib, base64
+import json
 
 def lista_dados(request):
     # Obtém o ano da query string, se houver
@@ -48,26 +49,12 @@ def visualizar_grafico(request, pk):
     dado = get_object_or_404(DadosEconomicos, pk=pk)
     
     meses = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"]
-    valores = [dado.janeiro, dado.fevereiro, dado.março, dado.abril, dado.maio, dado.junho,
-               dado.julho, dado.agosto, dado.setembro, dado.outubro, dado.novembro, dado.dezembro]
+    valores = [
+        float(dado.janeiro), float(dado.fevereiro), float(dado.março), float(dado.abril),
+        float(dado.maio), float(dado.junho), float(dado.julho), float(dado.agosto),
+        float(dado.setembro), float(dado.outubro), float(dado.novembro), float(dado.dezembro)
+    ]
+    
+    return render(request, 'dados_economicos/grafico.html', {'meses': meses, 'valores': valores, 'ano': dado.ano})
 
-    plt.figure(figsize=(8, 4))
-    plt.plot(meses, valores, marker='o', linestyle='-', color='b', label=f"Ano {dado.ano}")
-    
-    # Adiciona os valores acima dos pontos
-    for i, valor in enumerate(valores):
-        plt.text(meses[i], valor, f"{valor:.2f}%", ha='center', va='bottom', fontsize=10, color='black')
-
-    plt.xlabel("Meses")
-    plt.ylabel("Percentual Econômico (%)")
-    plt.title(f"Dados Econômicos - {dado.ano}")
-    plt.legend()
-    
-    buf = io.BytesIO()
-    plt.savefig(buf, format='png')
-    buf.seek(0)
-    string = base64.b64encode(buf.read()).decode()
-    uri = f"data:image/png;base64,{string}"
-    
-    return render(request, 'dados_economicos/grafico.html', {'grafico': uri, 'dado': dado})
 
